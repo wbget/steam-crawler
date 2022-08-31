@@ -88,11 +88,12 @@ const downC = new Crawler({
     } else {
       fs.createWriteStream(res.options.filename).write(res.body);
     }
+    j++;
     console.log(
       `下载文件: ${res.options.filename}...${(
         (j * 100) /
         downloads.length
-      ).toFixed(2)}`
+      ).toFixed(2)}%`
     );
     done();
   },
