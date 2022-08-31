@@ -1,0 +1,15 @@
+.DS_Store
+node_modules/
+dist/*
+!.gitkeep
+npm-debug.log
+test/unit/coverage
+.idea/
+.vscode/
+/npm-debug.log.*
+.vscode
+/*.sublime-workspace
+/*.sublime-project
+status.json
+debug.log
+.cache-loader
