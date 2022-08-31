@@ -102,16 +102,18 @@ storeC.on('drain', () => {
   if (!DOWNLOAD) return;
   for (const data of list) {
     const dir = __dirname + `/dist/${data.title}`;
-    downloads.push({ url: data.thumb, filename: `${dir}/thumb.jpg` });
-    downloads.push({ url: data.header, filename: `${dir}/header.jpg` });
+    const ds = [];
+    ds.push({ url: data.thumb, filename: `${dir}/thumb.jpg` });
+    ds.push({ url: data.header, filename: `${dir}/header.jpg` });
     data.imgs.forEach((url, index) => {
-      downloads.push({ url, filename: `${dir}/imgage${index}.jpg` });
+      ds.push({ url, filename: `${dir}/imgage${index}.jpg` });
     });
     if (VIDEO) {
       data.videos.forEach((url, index) => {
-        downloads.push({ url, filename: `${dir}/video${index}.webm` });
+        ds.push({ url, filename: `${dir}/video${index}.webm` });
       });
     }
-    downC.queue(downloads);
+    downC.queue(ds);
+    downloads.push(...ds);
   }
 });
