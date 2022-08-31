@@ -5,7 +5,8 @@ const fs = require('fs');
 const GetUrl = (start, count) =>
   `https://store.steampowered.com/search/results/?query&start=${start}&count=${count}&dynamic_data=&sort_by=Released_DESC&term=%E4%BF%AE%E4%BB%99&force_infinite=1&snr=1_7_7_151_7&infinite=1`;
 
-const DOWNLOAD = false;
+const DOWNLOAD = true;
+const VIDEO = false;
 const list = [];
 const listMap = {};
 const storeC = new Crawler({
@@ -105,9 +106,11 @@ storeC.on('drain', () => {
     data.imgs.forEach((url, index) => {
       downloads.push({ url, filename: `${dir}/imgage${index}.jpg` });
     });
-    data.videos.forEach((url, index) => {
-      downloads.push({ url, filename: `${dir}/video${index}.webm` });
-    });
+    if (VIDEO) {
+      data.videos.forEach((url, index) => {
+        downloads.push({ url, filename: `${dir}/video${index}.webm` });
+      });
+    }
     downC.queue(downloads);
   }
 });
