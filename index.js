@@ -2,6 +2,12 @@ const Cheerio = require('cheerio');
 const Crawler = require('crawler');
 const fs = require('fs');
 
+/**
+ *
+ * @param {number} start 开始索引
+ * @param {number} count 数量，steam接口最小25
+ * @returns
+ */
 const GetUrl = (start, count) =>
   `https://store.steampowered.com/search/results/?query&start=${start}&count=${count}&dynamic_data=&sort_by=Released_DESC&term=%E4%BF%AE%E4%BB%99&force_infinite=1&snr=1_7_7_151_7&infinite=1`;
 
@@ -74,7 +80,7 @@ const listC = new Crawler({
     }
   },
 });
-
+// listC.queue([GetUrl(50, 25), GetUrl(75, 25)]);
 listC.queue(GetUrl(0, 25));
 
 let j = 0;
