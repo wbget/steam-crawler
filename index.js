@@ -17,7 +17,10 @@ const list = [];
 const listMap = {};
 const storeC = new Crawler({
   callback: (error, res, done) => {
-    if (error) reject(error);
+    if (error) {
+      console.error(error);
+      return;
+    }
     const $ = Cheerio.load(res.body);
     const header = $('.game_header_image_full').attr('src');
     data = listMap[res.options.d];
@@ -29,14 +32,14 @@ const storeC = new Crawler({
     data.videos = videos;
     media.find('.highlight_player_item.highlight_movie').each(function () {
       const v = $(this);
-      const vr = v.attr('data-webm-source');
+      const vr = v.attr('data-webm-source').trim();
       videos.push(vr);
     });
     const imgs = [];
     data.imgs = imgs;
     media.find('.highlight_screenshot_link').each(function () {
       const i = $(this);
-      const ir = i.attr('href');
+      const ir = i.attr('href').trim();
       imgs.push(ir);
     });
     console.log(`抓取: ${data.title} 完成`);
@@ -55,7 +58,8 @@ const listC = new Crawler({
   jQuery: false,
   callback: (error, res, done) => {
     if (error) {
-      console.log(error);
+      console.error(error);
+      return;
     } else {
       const json = JSON.parse(res.body);
       const html = json.results_html;
@@ -68,9 +72,9 @@ const listC = new Crawler({
         listMap[id] = data;
         const item = $(this);
         const src = item.find('div img').attr('srcset');
-        const thumb = src.split(',')[1].replace(' 2x', '');
-        const title = item.find('.title').text();
-        const storeURL = item.attr('href');
+        const thumb = src.split(',')[1].replace(' 2x', '').trim();
+        const title = item.find('.title').text().trim();
+        const storeURL = item.attr('href').trim();
         data.thumb = thumb;
         data.title = title;
         data.storeURL = storeURL;
@@ -81,7 +85,7 @@ const listC = new Crawler({
   },
 });
 // listC.queue([GetUrl(50, 25), GetUrl(75, 25)]);
-listC.queue(GetUrl(0, 25));
+listC.queue(GetUrl(75, 25));
 
 let j = 0;
 const downloads = [];
@@ -110,8 +114,12 @@ storeC.on('drain', () => {
   for (const data of list) {
     const dir = __dirname + `/dist/${data.title}`;
     const ds = [];
-    ds.push({ url: data.thumb, filename: `${dir}/thumb.jpg` });
-    ds.push({ url: data.header, filename: `${dir}/header.jpg` });
+    if (data.thumb) {
+      ds.push({ url: data.thumb, filename: `${dir}/thumb.jpg` });
+    }
+    if (data.header) {
+      ds.push({ url: data.header, filename: `${dir}/header.jpg` });
+    }
     data.imgs.forEach((url, index) => {
       ds.push({ url, filename: `${dir}/imgage${index}.jpg` });
     });
@@ -120,7 +128,16 @@ storeC.on('drain', () => {
         ds.push({ url, filename: `${dir}/video${index}.webm` });
       });
     }
-    downC.queue(ds);
-    downloads.push(...ds);
+    if (
+      ds.length === 0 ||
+      ds.findIndex(v => {
+        return !v.url;
+      }) > -1
+    ) {
+      console.error(`${data.title} 没有资源`);
+    } else {
+      downC.queue(ds);
+      downloads.push(...ds);
+    }
   }
 });
