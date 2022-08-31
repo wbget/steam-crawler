@@ -75,7 +75,7 @@ const listC = new Crawler({
   },
 });
 
-listC.queue(GetUrl(0, 50));
+listC.queue(GetUrl(0, 25));
 
 let j = 0;
 const downloads = [];
