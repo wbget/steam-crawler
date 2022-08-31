@@ -91,9 +91,10 @@ const downC = new Crawler({
     }
     j++;
     console.log(
-      `下载文件: ${res.options.filename}...${(j / downloads.length).toFixed(
-        2
-      )}%`
+      `下载文件: ${res.options.filename}...${(
+        (j * 100) /
+        downloads.length
+      ).toFixed(2)}%`
     );
     done();
   },
