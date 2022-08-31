@@ -75,7 +75,7 @@ const listC = new Crawler({
   },
 });
 
-listC.queue([GetUrl(0, 50), GetUrl(50, 50)]);
+listC.queue(GetUrl(0, 20));
 
 let j = 0;
 const downloads = [];
@@ -85,15 +85,15 @@ const downC = new Crawler({
   callback: (err, res, done) => {
     if (err) {
       console.error(err.stack);
+      return;
     } else {
       fs.createWriteStream(res.options.filename).write(res.body);
     }
     j++;
     console.log(
-      `下载文件: ${res.options.filename}...${(
-        (j * 100) /
-        downloads.length
-      ).toFixed(2)}%`
+      `下载文件: ${res.options.filename}...${(j / downloads.length).toFixed(
+        2
+      )}%`
     );
     done();
   },
